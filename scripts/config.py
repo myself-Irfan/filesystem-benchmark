@@ -1,0 +1,22 @@
+from pathlib import Path
+
+
+class Config:
+    BASE_DIR = Path("data")
+    LARGE_FILES_DIR = BASE_DIR / "large"
+    SMALL_FILES_DIR = BASE_DIR / "small"
+
+    RESULTS_BASE_DIR = Path("results")
+    RESULTS_DIR = RESULTS_BASE_DIR / "raw"
+    GRAPHS_DIR = RESULTS_BASE_DIR / "graphs"
+    LOG_DIR = RESULTS_BASE_DIR / "logs"
+
+    LARGE_FILE_SIZES_GB = [1, 2, 5]
+    SMALL_FILE_COUNT = 5000
+    SMALL_FILE_SIZE_RANGE_KB = (1, 100)
+
+    SEQUENTIAL_WRITE_SIZE_MB = 1024
+    RANDOM_APPEND_SIZE_KB = 1
+    METADATA_OPERATIONS_COUNT = 1000
+
+    READ_BUFFER_SIZE = 1024 * 1024

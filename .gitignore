@@ -1,0 +1,10 @@
+# env
+*.idea
+*.venv
+.DS_Store
+
+# project
+*logs/
+*graphs/
+data/
+results/
