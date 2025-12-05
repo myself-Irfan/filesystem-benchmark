@@ -2,7 +2,8 @@
 *.idea
 *.venv
 .DS_Store
-*pycache/
+__pycache__/
+*.pyc
 
 # project
 *logs/
@@ -10,4 +11,5 @@
 data/
 results/
 
-.env
+.env__pycache__/
+*.pyc
