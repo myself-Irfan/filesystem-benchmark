@@ -1,6 +1,3 @@
-"""
-Enhanced results parser with support for new metrics and system info.
-"""
 import csv
 import json
 from pathlib import Path
@@ -16,10 +13,7 @@ class ResultsParser:
     def __init__(self, logger: Optional[structlog.BoundLogger] = None):
         self.logger = logger or structlog.get_logger()
 
-    def save_csv(self,
-                 results: Dict,
-                 system_info: Dict,
-                 run_id: str) -> Path:
+    def save_csv(self, results: Dict, system_info: Dict, run_id: str) -> Path:
         """Save detailed results to CSV"""
         csv_file = Config.RESULTS_DIR / f"metrics_{run_id}.csv"
         csv_file.parent.mkdir(parents=True, exist_ok=True)
@@ -30,7 +24,6 @@ class ResultsParser:
             with open(csv_file, "w", newline="") as f:
                 writer = csv.writer(f)
 
-                # Header
                 writer.writerow([
                     "Test_Name", "File_Size_MB", "Elapsed_Sec",
                     "Throughput_MBps", "IOPS", "Operations",

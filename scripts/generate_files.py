@@ -1,6 +1,3 @@
-"""
-File generator updated to use new config methods.
-"""
 import os
 import random
 from pathlib import Path

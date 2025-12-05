@@ -25,14 +25,14 @@ class Config:
 
     @staticmethod
     def get_large_file_sizes_gb() -> List[int]:
-        sizes_str = get_env_or_raise("LARGE_FILE_SIZES_GB")  # comma-separated
+        sizes_str = get_env_or_raise("LARGE_FILE_SIZES_GB")
         return [int(s.strip()) for s in sizes_str.split(",")]
 
     SMALL_FILE_COUNT = int(get_env_or_raise("SMALL_FILE_COUNT"))
 
     @staticmethod
     def get_small_file_size_range_kb() -> tuple:
-        range_str = get_env_or_raise("SMALL_FILE_SIZE_RANGE_KB")  # format: min,max
+        range_str = get_env_or_raise("SMALL_FILE_SIZE_RANGE_KB")
         min_kb, max_kb = range_str.split(",")
         return int(min_kb.strip()), int(max_kb.strip())
 
@@ -43,7 +43,7 @@ class Config:
 
     @staticmethod
     def get_latency_percentiles() -> List[float]:
-        percentiles_str = get_env_or_raise("LATENCY_PERCENTILES")  # comma-separated
+        percentiles_str = get_env_or_raise("LATENCY_PERCENTILES")
         return [float(p.strip()) for p in percentiles_str.split(",")]
 
     LATENCY_SAMPLES = int(get_env_or_raise("LATENCY_SAMPLES"))

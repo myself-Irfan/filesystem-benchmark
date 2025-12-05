@@ -65,7 +65,6 @@ def ensure_directories():
     for d in dirs:
         Path(d).mkdir(parents=True, exist_ok=True)
 
-
 def log_summary(results: dict, system_info: dict, logger: structlog.BoundLogger):
     logger.info("BENCHMARK SUMMARY")
 
@@ -114,7 +113,6 @@ def log_summary(results: dict, system_info: dict, logger: structlog.BoundLogger)
 
     logger.info("=" * 70)
 
-
 def main():
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
     logger = setup_logging(run_id)
@@ -152,16 +150,8 @@ def main():
 
         log_summary(results, system_info, logger)
 
-        logger.info("benchmark_suite_completed",
-                    run_id=run_id,
-                    csv_path=str(csv_path),
-                    json_path=str(json_path),
-                    graph_path=str(graph_path))
-
-        logger.info("results_saved",
-                    csv=str(csv_path),
-                    json=str(json_path),
-                    graph=str(graph_path))
+        logger.info("benchmark_suite_completed", run_id=run_id, csv_path=str(csv_path), json_path=str(json_path), graph_path=str(graph_path))
+        logger.info("results_saved", csv=str(csv_path), json=str(json_path), graph=str(graph_path))
 
     except Exception as e:
         logger.exception("benchmark_suite_failed", error=str(e))
