@@ -1,210 +1,228 @@
-# Filesystem Benchmark Suite
+# Filesystem Performance Benchmark Suite
 
-A comprehensive filesystem performance testing tool with structured logging, detailed metrics, and visualization capabilities.
+A comprehensive Python tool for benchmarking filesystem performance with detailed metrics including throughput, IOPS, and latency percentiles.
 
-## 🚀 Features
+## Features
 
-- **Sequential I/O Testing**: Measure read/write performance on large files (1GB, 2GB, 5GB)
-- **Random I/O Testing**: Test performance with thousands of small files
-- **Metadata Operations**: Benchmark file creation, permission changes, and deletion
-- **Structured Logging**: Detailed logs using structlog with real-time console output and file logging
-- **Results Visualization**: Automatic CSV export and professional graph generation
-- **Per-Run Tracking**: Each benchmark run gets its own timestamped directory for logs and results
+✅ **Multi-size Testing** - Test sequential operations on multiple file sizes (1GB, 2GB, 5GB)  
+✅ **System Information Capture** - Records CPU, RAM, disk type, OS details  
+✅ **Advanced Metrics** - Throughput (MB/s), IOPS, latency percentiles (P50, P95, P99)  
+✅ **Configurable via .env** - No hardcoded values, easy customization  
+✅ **Comprehensive Reports** - CSV data + JSON with system info + visual graphs  
+✅ **Structured Logging** - Detailed logs for debugging and analysis  
 
-## 📋 Requirements
-
-- Python 3.8 or higher
-- pip (Python package manager)
-
-## 🔧 Installation
-
-1. Clone or download this repository
-2. Navigate to the project directory
-3. Install dependencies:
+## Installation
 
 ```bash
+# Clone or download the project
+cd filesystem-benchmark
+
+# Install dependencies
 pip install -r requirements.txt
+
+# Copy and configure environment
+cp .env.example .env
+# Edit .env to customize settings
 ```
 
-## 🎯 Quick Start
+## Configuration
 
-Run the complete benchmark suite:
+Edit `.env` to customize benchmark parameters:
 
 ```bash
+# Test all large file sizes or just 1GB
+TEST_ALL_LARGE_FILES=true
+
+# File sizes to generate and test (comma-separated, in GB)
+LARGE_FILE_SIZES_GB=1,2,5
+
+# Number of small files for random I/O testing
+SMALL_FILE_COUNT=5000
+
+# Latency percentiles to calculate
+LATENCY_PERCENTILES=50,95,99
+
+# Number of operations to sample for latency stats
+LATENCY_SAMPLES=100
+```
+
+## Usage
+
+```bash
+# Run full benchmark suite
 python main.py
 ```
 
-The script will:
-1. Generate test files (large and small)
-2. Run all benchmark tests
-3. Save results to CSV
-4. Generate visualization graphs
-5. Log everything to console and file
+The tool will:
+1. Collect system information (CPU, RAM, disk, OS)
+2. Generate test files if they don't exist
+3. Run all benchmarks with progress logging
+4. Save results to CSV and JSON
+5. Generate performance visualization graphs
+6. Display summary in console
 
-## 📁 Project Structure
+## Benchmark Tests
 
-```
-filesystem-benchmark/
-├── main.py                 # Main entry point
-├── requirements.txt        # Python dependencies
-├── README.md              # This file
-├── .gitignore            # Git ignore rules
-├── scripts/                  # Source package
-│   ├── config.py         # Configuration settings
-│   ├── benchmarks.py     # Benchmark implementations
-│   ├── generate_files.py # Test file generation
-│   ├── metadata.py       # Metadata operations
-│   └── parser.py         # Results parsing and visualization
-├── data/                 # Test files (git-ignored)
-│   ├── large/            # Large test files (1GB+)
-│   └── small/            # Small test files (1-100KB)
-└── results/              # Benchmark outputs (git-ignored)
-    ├── raw/              # CSV results per run
-    ├── graphs/           # PNG visualizations per run
-    └── logs/             # Structured logs per run
-        └── YYYYMMDD_HHMMSS/
-            └── benchmark.log
-```
+### 1. Sequential Write (Multi-size)
+- Writes large files (1GB, 2GB, 5GB based on config)
+- Measures throughput (MB/s), IOPS, latency percentiles
+- Tests sustained write performance
 
-## 🧪 Benchmark Tests
-
-### 1. Sequential Write
-- Writes a 1GB file sequentially
-- Measures write throughput (MB/s)
-
-### 2. Sequential Read
-- Reads a 1GB file sequentially
-- Measures read throughput (MB/s)
+### 2. Sequential Read (Multi-size)
+- Reads large files in chunks
+- Measures throughput (MB/s), IOPS, latency percentiles
+- Tests sustained read performance
 
 ### 3. Random Read/Write Small Files
-- Reads 5,000 small files (1-100KB each)
-- Appends 1KB to each file
-- Measures operations per second
+- Reads 5,000 small files (1-100 KB each)
+- Appends data to each file
+- Measures IOPS and latency
+- Tests small file handling
 
 ### 4. Metadata Operations
 - Creates 1,000 files
-- Changes permissions on all files
+- Changes permissions
 - Deletes all files
-- Measures operations per second
+- Measures metadata IOPS
 
-## ⚙️ Configuration
+## Output Files
 
-Customize benchmark parameters by editing `src/config.py`:
+Results are saved in `results/` directory:
 
-```python
-class Config:
-    # File generation settings
-    LARGE_FILE_SIZES_GB = [1, 2, 5]
-    SMALL_FILE_COUNT = 5000
-    SMALL_FILE_SIZE_RANGE_KB = (1, 100)
-    
-    # Benchmark settings
-    SEQUENTIAL_WRITE_SIZE_MB = 1024
-    METADATA_OPERATIONS_COUNT = 1000
-    
-    # Buffer sizes
-    READ_BUFFER_SIZE = 1024 * 1024  # 1MB
+```
+results/
+├── raw/
+│   ├── metrics_20241205_143022.csv      # Detailed metrics
+│   └── full_results_20241205_143022.json # Complete data + system info
+├── graphs/
+│   └── benchmark_chart_20241205_143022.png # Visual charts
+└── logs/
+    └── 20241205_143022/
+        └── benchmark.log                 # Detailed execution log
 ```
 
-## 📊 Output Files
+### CSV Columns
+- Test_Name
+- File_Size_MB
+- Elapsed_Sec
+- Throughput_MBps
+- IOPS
+- Operations
+- Latency_P50, Latency_P95, Latency_P99
+- Run_ID
 
-Each benchmark run generates timestamped outputs:
-
-### Console Output
-Real-time progress with colored, structured logs:
+### JSON Structure
+```json
+{
+  "run_id": "20241205_143022",
+  "system_info": {
+    "cpu": {...},
+    "memory": {...},
+    "disk": {...},
+    "os": {...}
+  },
+  "results": {
+    "sequential_write": [...],
+    "sequential_read": [...],
+    "random_rw": {...},
+    "metadata": {...}
+  }
+}
 ```
-2024-12-03T10:30:45.123456Z [info     ] benchmark_suite_started run_id=20241203_103045
-2024-12-03T10:30:45.234567Z [info     ] step_started description=Generating test files step=1
-...
+
+## Interpreting Results
+
+### Throughput (MB/s)
+- Higher is better
+- Measures data transfer rate
+- Important for large file operations
+
+### IOPS (Operations/Second)
+- Higher is better
+- Measures number of I/O operations
+- Critical for databases and random access
+
+### Latency Percentiles
+- Lower is better
+- P50 (median): typical performance
+- P95: 95% of operations complete within this time
+- P99: worst-case performance (excluding top 1%)
+
+## Project Structure
+
+```
+filesystem-benchmark/
+├── main.py                  # Main orchestrator
+├── scripts/
+│   ├── config.py           # Configuration loader
+│   ├── benchmarks.py       # Benchmark implementations
+│   ├── generate_files.py   # Test file generator
+│   ├── metadata.py         # Metadata operations
+│   ├── parser.py           # Results parser & visualizer
+│   └── system_info.py      # System information collector
+├── .env.example            # Example configuration
+├── requirements.txt        # Python dependencies
+└── README.md              # This file
 ```
 
-### Log File
-`results/logs/YYYYMMDD_HHMMSS/benchmark.log`
-- Complete structured log of all operations
-- Includes timing, throughput, and performance metrics
+## Advanced Usage
 
-### CSV Results
-`results/raw/metrics_YYYYMMDD_HHMMSS.csv`
-```csv
-Test,Time_sec,Run_ID
-Sequential Write,12.34,20241203_103045
-Sequential Read,8.56,20241203_103045
-...
-```
-
-### Visualization
-`results/graphs/benchmark_chart_YYYYMMDD_HHMMSS.png`
-- Bar chart comparing all test results
-- Value labels showing exact timings
-- Professional styling with grid
-
-## 🔍 Understanding Results
-
-**Lower times are better** for all tests.
-
-- **Sequential I/O**: Tests raw disk read/write speed
-  - Good: < 10 seconds for 1GB
-  - Excellent: < 5 seconds for 1GB
-
-- **Random I/O**: Tests performance with many small files
-  - Depends heavily on filesystem and storage type
-  - SSD performs significantly better than HDD
-
-- **Metadata Operations**: Tests filesystem overhead
-  - Good: < 2 seconds for 1000 operations
-  - Excellent: < 1 second for 1000 operations
-
-## 🛠️ Troubleshooting
-
-### Large File Generation Takes Too Long
-- This is normal for multi-GB files
-- Files are only generated once and reused
-- Check if files already exist in `data/large/`
-
-### Out of Disk Space
-- Large files require significant space (8GB+ total)
-- Reduce `LARGE_FILE_SIZES_GB` in config.py
-- Delete test files in `data/` when done
-
-### Permission Errors
-- Ensure write permissions in project directory
-- On Unix/Linux, check folder permissions: `chmod 755 .`
-
-## 📝 Example Session
-
+### Test Only 1GB Files (Faster)
 ```bash
-$ python main.py
-
-2024-12-03T10:30:45.123456Z [info     ] benchmark_suite_started run_id=20241203_103045
-2024-12-03T10:30:45.234567Z [info     ] step_started description=Generating test files step=1
-2024-12-03T10:30:45.345678Z [info     ] generating_large_files output_dir=data/large sizes_gb=[1, 2, 5]
-2024-12-03T10:30:45.456789Z [info     ] large_file_exists_skipping path=data/large/file_1GB.bin size_gb=1
-...
-2024-12-03T10:35:20.123456Z [info     ] benchmark_completed elapsed_sec=12.34 test=sequential_write throughput_mbps=82.97
-...
-2024-12-03T10:40:15.789012Z [info     ] all_benchmarks_completed
-2024-12-03T10:40:16.890123Z [info     ] benchmark_suite_completed
-
-All steps completed! Check results/ for outputs.
+# In .env
+TEST_ALL_LARGE_FILES=false
 ```
 
-## 🤝 Contributing
+### Adjust Latency Sampling
+```bash
+# In .env
+LATENCY_SAMPLES=50  # Fewer samples = faster, less accurate
+LATENCY_PERCENTILES=50,90,95,99  # Add more percentiles
+```
 
-Feel free to open issues or submit pull requests for improvements!
+### Change File Sizes
+```bash
+# In .env
+LARGE_FILE_SIZES_GB=1,4,8  # Test different sizes
+SMALL_FILE_COUNT=10000     # More small files
+```
 
-## 📄 License
+## Requirements
 
-This project is open source and available for educational and testing purposes.
+- Python 3.8+
+- Linux, macOS, or Windows
+- Sufficient disk space for test files
+- Write permissions in working directory
 
-## ⚠️ Warning
+## Troubleshooting
 
-This tool writes and reads large amounts of data. Ensure you have:
-- Sufficient disk space (10GB+ recommended)
-- Permission to perform I/O benchmarks
-- Understanding that results will vary by hardware
+**Issue**: Out of memory during large file generation  
+**Solution**: Large files are written in 100MB chunks, but very large sizes (10GB+) may need more RAM. Reduce file sizes in .env.
 
-## 🔗 Related Tools
+**Issue**: Permission denied errors  
+**Solution**: Ensure write permissions in the working directory. On Linux, check with `ls -la`.
 
-- [fio](https://github.com/axboe/fio) - Flexible I/O Tester
-- [ioping](https://github.com/koct9i/ioping) - Simple disk I/O latency monitoring tool
-- [dd](https://www.gnu.org/software/coreutils/manual/html_node/dd-invocation.html) - Convert and copy a file
+**Issue**: Slow benchmark execution  
+**Solution**: 
+- Set `TEST_ALL_LARGE_FILES=false` to only test 1GB
+- Reduce `SMALL_FILE_COUNT` 
+- Reduce `LATENCY_SAMPLES`
+
+## Performance Expectations
+
+Typical results on modern hardware:
+
+| Operation | SSD | HDD |
+|-----------|-----|-----|
+| Sequential Write | 500-3000 MB/s | 100-200 MB/s |
+| Sequential Read | 500-3500 MB/s | 100-200 MB/s |
+| Random IOPS | 10,000-50,000 | 100-200 |
+| Metadata IOPS | 5,000-20,000 | 50-150 |
+
+## License
+
+MIT License - Feel free to use and modify.
+
+## Contributing
+
+Contributions welcome! Please test thoroughly before submitting PRs.

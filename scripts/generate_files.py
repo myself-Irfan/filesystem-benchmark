@@ -1,3 +1,6 @@
+"""
+File generator updated to use new config methods.
+"""
 import os
 import random
 from pathlib import Path
@@ -16,13 +19,18 @@ class FileGenerator:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        self.logger.info("generating_large_files", sizes_gb=Config.LARGE_FILE_SIZES_GB, output_dir=str(output_dir))
+        sizes_gb = Config.get_large_file_sizes_gb()
+        self.logger.info("generating_large_files",
+                        sizes_gb=sizes_gb,
+                        output_dir=str(output_dir))
 
-        for size_gb in Config.LARGE_FILE_SIZES_GB:
+        for size_gb in sizes_gb:
             file_path = output_dir / f"file_{size_gb}GB.bin"
 
             if file_path.exists():
-                self.logger.info("large_file_exists_skipping", path=str(file_path), size_gb=size_gb)
+                self.logger.info("large_file_exists_skipping",
+                               path=str(file_path),
+                               size_gb=size_gb)
                 continue
 
             try:
@@ -52,15 +60,20 @@ class FileGenerator:
                                   error=str(e))
                 raise
 
-    def generate_small_files(self, output_dir: Optional[Path] = None, count: Optional[int] = None) -> None:
+    def generate_small_files(self,
+                           output_dir: Optional[Path] = None,
+                           count: Optional[int] = None) -> None:
         output_dir = output_dir or Config.SMALL_FILES_DIR
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
 
         count = count or Config.SMALL_FILE_COUNT
-        min_kb, max_kb = Config.SMALL_FILE_SIZE_RANGE_KB
+        min_kb, max_kb = Config.get_small_file_size_range_kb()
 
-        self.logger.info("generating_small_files", count=count, size_range_kb=(min_kb, max_kb), output_dir=str(output_dir))
+        self.logger.info("generating_small_files",
+                        count=count,
+                        size_range_kb=(min_kb, max_kb),
+                        output_dir=str(output_dir))
 
         try:
             for i in range(count):

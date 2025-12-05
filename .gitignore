@@ -9,3 +9,5 @@
 *graphs/
 data/
 results/
+
+.env
